@@ -8,11 +8,14 @@ spl_autoload_register(function ($class)
 $messages = new    Messages;
 BranchAndBound::$messages = $messages;
 Node::$messages = $messages;
+set_time_limit(5*60);
 $t1 = microtime(true);
 $tableBranchAndBound = new    TableBranchAndBound;
 $root = new    Node($tableBranchAndBound->table);
 $t2 = microtime(true);
 $googleRows = new    RowsGoogleCharts($root);
+
+$json = $tableBranchAndBound->toJson();
 
 ?><!DOCTYPE html>
 <html lang="ru">
@@ -23,33 +26,6 @@ $googleRows = new    RowsGoogleCharts($root);
     <title>Метод ветвей и границ</title>
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <link href="user.css" rel="stylesheet">
-    <!-- Yandex.Metrika counter -->
-<script type="text/javascript">
-(function (d, w, c) {
-    (w[c] = w[c] || []).push(function() {
-        try {
-            w.yaCounter27657369 = new Ya.Metrika({id:27657369,
-                    webvisor:true,
-                    clickmap:true,
-                    trackLinks:true,
-                    accurateTrackBounce:true});
-        } catch(e) { }
-    });
-
-    var n = d.getElementsByTagName("script")[0],
-        s = d.createElement("script"),
-        f = function () { n.parentNode.insertBefore(s, n); };
-    s.type = "text/javascript";
-    s.async = true;
-    s.src = (d.location.protocol == "https:" ? "https:" : "http:") + "//mc.yandex.ru/metrika/watch.js";
-
-    if (w.opera == "[object Opera]") {
-        d.addEventListener("DOMContentLoaded", f, false);
-    } else { f(); }
-})(document, window, "yandex_metrika_callbacks");
-</script>
-<noscript><div><img src="//mc.yandex.ru/watch/27657369" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
-<!-- /Yandex.Metrika counter -->
     <script src="template/default/js/jquery-2.1.1.min.js"></script>
     <script type="text/javascript" src="https://www.google.com/jsapi"></script>
     <script type="text/javascript">
@@ -142,6 +118,16 @@ $googleRows = new    RowsGoogleCharts($root);
                 </p>
                 <?= $tableBranchAndBound ?>
                 <button class="btn btn-primary" type="submit">Посчитать!</button>
+            </form>
+
+            <hr>
+            <form method="POST">
+                <input type="hidden" name="format" value="json">
+                <div class="form-group">
+                    <label for="data">Матрица в формате JSON</label>
+                    <textarea name="data" id="data" class="form-control" style="max-width: none;"><?= htmlspecialchars($json, ENT_NOQUOTES) ?></textarea>
+                </div>
+                <button class="btn btn-primary">Посчитать!</button>
             </form>
         </div>
     </div>

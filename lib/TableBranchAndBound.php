@@ -19,6 +19,10 @@ class    TableBranchAndBound
         {
             $this->random();
         }
+        elseif (isset($_POST['format']) &&  $_POST['format'] === 'json' && isset($_POST['data']))
+		{
+			$this->fromJson();
+		}
         elseif (isset($_POST['table']))
         {
             $this->fromPost();
@@ -52,6 +56,29 @@ class    TableBranchAndBound
             }
         }
     }
+
+    private function fromJson()
+	{
+		$data = json_decode($_POST['data'], true);
+		foreach ($data as $rowName => $row)
+		{
+			foreach ($row as $columnName => $value)
+			{
+				$this->table[$rowName][$columnName] = is_null($value) ? INF : abs(intval($value));
+			}
+		}
+		foreach ($this->table as $rowName => $row)
+		{
+			$this->table[$rowName][$rowName] = INF;
+			ksort($this->table[$rowName]);
+		}
+		ksort($this->table);
+	}
+
+	function toJson()
+	{
+		return json_encode($this->table);
+	}
 
     /**
      * Заполнение таблицы на основе полученных данных
